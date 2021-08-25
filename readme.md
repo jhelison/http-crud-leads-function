@@ -1,5 +1,5 @@
 # AWS Lambda/Gateway Auto Deploy Repository
-The repository serves to manage the files that are deployed on AWS lambda using github actions.
+The repository serves to manage the files that are deployed on **AWS lambda** using github actions.
  
 :bangbang: This is under construction! See the todo list at the end for more details.
 
@@ -20,19 +20,19 @@ The repository serves to manage the files that are deployed on AWS lambda using 
 ## How it works.
  
 ### How the AWS server works.
-Within AWS we have the following components:
-- AWS DynamoDB which serves as a key pair table.
-- AWS Lambda connecting our API Gateway with DynamoDB.
-- AWS Gateway that manages access to our routes.
+Within **AWS** we have the following components:
+- **AWS DynamoDB** which serves as a key pair table.
+- **AWS Lambda** connecting our **API Gateway** with **DynamoDB**.
+- **AWS Gateway** that manages access to our routes.
  
 ### How does Github actions work.
-The github action uploads the `index.js` file into AWS Lambda using the following steps:
-- Inside the `.github\workflows` we have the `main.yml` file that builds a VM inside Github, starting a ubuntu server that make the deploy.
+The github action uploads the `index.js` file into **AWS Lambda** using the following steps:
+- Inside the `.github\workflows` we have the `main.yml` file that builds a VM inside **Github**, starting a ubuntu server that make the deploy.
 - The file `index.js` passes through NCC for unification.
 - The output dist is ziped.
-- Finnaly the ziped file is passed to AWS lambda server.
+- Finnaly the ziped file is passed to **AWS lambda server**.
  
-AWS access management is done using an automated IAM user to access server acess keys.
+**AWS** access management is done using an automated IAM user to access server acess keys.
  
 ## Acess to the server
 Inside our API Gateway, we have the link https://g0deojz10k.execute-api.us-east-2.amazonaws.com, were we make the request to our routes.
