@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
                 body = `Deleted item ${event.pathParameters.id}`
                 break
                 
-            case "GET /items/{id}":
+            case "GET /item/{id}":
                 body = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
