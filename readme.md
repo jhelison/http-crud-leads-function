@@ -1,36 +1,50 @@
-# Repositorio de deploy automático AWS lambda/gateway
-O repositório serve para administrar os arquivos que são deployados na AWS lambda usando github actions.
+# AWS Lambda/Gateway Auto Deploy Repository
+The repository serves to manage the files that are deployed on AWS lambda using github actions.
  
-:bangbang: Repositório em Construção! Vejo item To Do para mais detalhes
+:bangbang: This is under construction! See the todo list at the end for more details.
+
+## Table of contents
+
+- [AWS Lambda/Gateway Auto Deploy Repository](#aws-lambda-gateway-auto-deploy-repository)
+  * [How it works.](#how-it-works)
+    + [How the AWS server works.](#how-the-aws-server-works)
+    + [How does Github actions work.](#how-does-github-actions-work)
+  * [Acess to the server](#acess-to-the-server)
+    + [GET on all the items](#get-on-all-the-items)
+    + [GET on specific item](#get-on-specific-item)
+    + [Delete item](#delete-item)
+    + [New item](#new-item)
+  * [Todo](#todo)
+  * [Changelog](#changelog)
  
-## Funcionamento Geral 
+## How it works.
  
-### Como funciona o servidor na AWS.
-Dentro da AWS temos os seguintes componentes:
-- AWS DynamoDB que serve como uma tabela par chave.
-- AWS Lambda que conect nosso API Gateway com o DynamoDB
-- AWS Gateway que gerencia os acessos a nossa URL
+### How the AWS server works.
+Within AWS we have the following components:
+- AWS DynamoDB which serves as a key pair table.
+- AWS Lambda connecting our API Gateway with DynamoDB.
+- AWS Gateway that manages access to our routes.
  
-### Como funciona a Github action.
-A github action faz upload do arquivo `index.js` para dentro da AWS Lambda usando os seguintes passo:
-- Dentro de `.github\workflows` temos o `main.yml` que cria uma VM dentro do Github, iniciando um sistema Ubuntu que faz o deploy.
-- O arquivo index.js passa pelo NCC para unificação
-- O mesmo é zipado
-- Finalmente o arquivo zip é deployado no AWS Lambda.
+### How does Github actions work.
+The github action uploads the `index.js` file into AWS Lambda using the following steps:
+- Inside the `.github\workflows` we have the `main.yml` file that builds a VM inside Github, starting a ubuntu server that make the deploy.
+- The file `index.js` passes through NCC for unification.
+- The output dist is ziped.
+- Finnaly the ziped file is passed to AWS lambda server.
  
-O gerenciamento de acesso ao AWS é feito usando um usuário automatizado IAM, para acesso as keys do servidor.
+AWS access management is done using an automated IAM user to access server acess keys.
  
-## Acesso ao servidor
-Dentro da nossa API Gateway, temos acesso ao link https://g0deojz10k.execute-api.us-east-2.amazonaws.com, onde temos acesso a nossa API.
+## Acess to the server
+Inside our API Gateway, we have the link https://g0deojz10k.execute-api.us-east-2.amazonaws.com, were we make the request to our routes.
  
-A nossa api tem as seguintes rotas:
+Our api have the following routes:
  
-### Todos os items
+### GET on all the items
  
 ```http
   GET /items
 ```
-Retorna a listagem de items no Dynamo com a seguintes estrutura:
+Returns the items list with the following structure:
 ```json
   {
   "Items": [
@@ -52,13 +66,13 @@ Retorna a listagem de items no Dynamo com a seguintes estrutura:
 }
 ```
  
-### Pegar Item especifico
+### GET on specific item
  
 ```http
   GET /items/{id}
 ```
-Onde id é a id do item sem o colchetes.
-Retorna o item no Dynamo com a seguintes estrutura:
+Where id is the id of the item without the brackets.
+Returns the item in Dynamo with the following structure:
 ```json
 {
   "Item": {
@@ -70,27 +84,27 @@ Retorna o item no Dynamo com a seguintes estrutura:
 }
 ```
  
-Caso o item não seja encontrado retorna:
+If the item is not found, it returns:
 ```json
 {}
 ```
 
-### Deletar item
+### Delete item
 
 ```http
   DELETE /items/{id}
 ```
-Onde id é a id do item sem o colchetes.
-Retorna a seguinte resposta:
+Where id is the id of the item without the brackets.
+Returns:
 `Deleted item {id}`
  
-### Cadastro de item
+### New item
  
 ```http
   PUT /items
 ```
  
-O item deve ser cadastro com a seguinte estrutura em um `Content-Type: application/json`:
+The item must be send with the following structure with `Content-Type: application/json`:
  
 ```json
 {
@@ -101,21 +115,23 @@ O item deve ser cadastro com a seguinte estrutura em um `Content-Type: applicati
 }
 ```
  
-Lembrando que como o dynamo usa par chave, caso o id já tenha sido cadastrada, o item com a id será atualizado.
-Retorna:
+Remembering that as dynamo uses key pair, if the id has already been registered, the item with the id will be updated.
+Returns:
 `Put item {id}`
  
 ## Todo
  
-- [ ]  Colocar o email como id.
-- [ ]  Fazer validação no email.
-- [ ]  Criar a coluna de data criação.
-- [ ]  Criar a coluna de última atualização.
-- [ ]  Criar a coluna de status.
-- [ ]  Criar um método http patch.
-- [ ]  Adicionar http status corretos a cada metodo.
-- [ ]  Criar métodos de pesquisa usando parâmetros.
+- [ ]  Put the email as id.
+- [ ]  Validate email.
+- [ ]  Create the created at column.
+- [ ]  Create the last update at column.
+- [ ]  Create status column.
+- [ ]  Create an http patch method.
+- [ ]  Add correct http status to each method.
+- [ ]  Create Search Methods Using Parameters.
 
 ## Changelog
-### 1.0.0 25/08/2021
-- Adicionada funcionalidade basica do sistema.
+### 1.0.1 25/08/2021
+- Changed the language of the project.
+### 1.0.0 24/08/2021
+- First version of the project with basic functionality.
