@@ -52,10 +52,10 @@ Retorna a listagem de items no Dynamo com a seguintes estrutura:
 }
 ```
  
-### Item especifico
+### Pegar Item especifico
  
 ```http
-  GET /item/{id}
+  GET /items/{id}
 ```
 Onde id é a id do item sem o colchetes.
 Retorna o item no Dynamo com a seguintes estrutura:
@@ -74,6 +74,15 @@ Caso o item não seja encontrado retorna:
 ```json
 {}
 ```
+
+### Deletar item
+
+```http
+  DELETE /items/{id}
+```
+Onde id é a id do item sem o colchetes.
+Retorna a seguinte resposta:
+`Deleted item {id}`
  
 ### Cadastro de item
  
@@ -93,6 +102,8 @@ O item deve ser cadastro com a seguinte estrutura em um `Content-Type: applicati
 ```
  
 Lembrando que como o dynamo usa par chave, caso o id já tenha sido cadastrada, o item com a id será atualizado.
+Retorna:
+`Put item {id}`
  
 ## Todo
  
@@ -102,10 +113,9 @@ Lembrando que como o dynamo usa par chave, caso o id já tenha sido cadastrada, 
 - [ ]  Criar a coluna de última atualização.
 - [ ]  Criar a coluna de status.
 - [ ]  Criar um método http patch.
+- [ ]  Adicionar http status corretos a cada metodo.
 - [ ]  Criar métodos de pesquisa usando parâmetros.
 
 ## Changelog
-### 1.0.1 25/08/2021
-- Corrigido metodo GET de `/items/{id}` para `/item/{id}`
 ### 1.0.0 25/08/2021
 - Adicionada funcionalidade basica do sistema.
