@@ -9,27 +9,28 @@ exports.handler = async (event, context) => {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
     }
-
+    
     try {
         switch (event.routeKey) {
-            case "DELETE /items/{id}":
+            case "DELETE /items/{email}":
                 await dynamo
                     .delete({
                         TableName: "http-crud-leads-items",
                         Key: {
-                            id: event.pathParameters.id,
+                            email: event.pathParameters.email,
                         },
                     })
                     .promise()
-                body = `Deleted item ${event.pathParameters.id}`
+                statusCode = 204
+                body = null
                 break
                 
-            case "GET /items/{id}":
+            case "GET /items/{email}":
                 body = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
                         Key: {
-                            id: event.pathParameters.id,
+                            email: event.pathParameters.email,
                         },
                     })
                     .promise()
@@ -43,18 +44,22 @@ exports.handler = async (event, context) => {
 
             case "PUT /items":
                 let requestJSON = JSON.parse(event.body)
+
+                const Item = {
+                    id: requestJSON.id,
+                    name: requestJSON.name,
+                    email: requestJSON.email,
+                    fone: requestJSON.fone,
+                }
+
                 await dynamo
                     .put({
                         TableName: "http-crud-leads-items",
-                        Item: {
-                            id: requestJSON.id,
-                            name: requestJSON.name,
-                            email: requestJSON.email,
-                            fone: requestJSON.fone,
-                        },
+                        Item,
                     })
                     .promise()
-                body = `Put item ${requestJSON.id}`
+                statusCode = 201
+                body = Item
                 break
             default:
                 throw new Error(`Unsupported route: "${event.routeKey}"`)
