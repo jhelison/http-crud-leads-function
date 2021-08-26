@@ -5,7 +5,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient()
 exports.handler = async (event, context) => {
     let body = null
     let statusCode = 200
-    let item
+    let Item
     const headers = {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
@@ -22,7 +22,7 @@ exports.handler = async (event, context) => {
             case "PUT /items":
                 let requestJSON = JSON.parse(event.body)
 
-                item = {
+                Item = {
                     id: requestJSON.id,
                     name: requestJSON.name,
                     email: requestJSON.email,
@@ -32,15 +32,15 @@ exports.handler = async (event, context) => {
                 await dynamo
                     .put({
                         TableName: "http-crud-leads-items",
-                        item,
+                        item: Item,
                     })
                     .promise()
                 statusCode = 201
-                body = item
+                body = Item
                 break
 
             case "GET /item/{email}":
-                item = await dynamo
+                Item = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
                         Key: {
@@ -49,8 +49,8 @@ exports.handler = async (event, context) => {
                     })
                     .promise()
 
-                if(Object.keys(item).length){
-                    body = item
+                if(Object.keys(Item).length){
+                    body = Item
                 }
                 else{
                     statusCode = 404
@@ -58,7 +58,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "DELETE /item/{email}":
-                item = await dynamo
+                Item = await dynamo
                 .get({
                     TableName: "http-crud-leads-items",
                     Key: {
@@ -67,7 +67,7 @@ exports.handler = async (event, context) => {
                 })
                 .promise()
 
-                if(Object.keys(item).length){
+                if(Object.keys(Item).length){
                     await dynamo
                     .delete({
                         TableName: "http-crud-leads-items",
@@ -86,7 +86,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "PATCH /item/{email}":
-                item = await dynamo
+                Item = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
                         Key: {
@@ -95,8 +95,8 @@ exports.handler = async (event, context) => {
                     })
                     .promise()
 
-                if(Object.keys(item).length){
-                    const newItem = {...item.Item, ...JSON.parse(event.body)}
+                if(Object.keys(Item).length){
+                    const newItem = {...Item.Item, ...JSON.parse(event.body)}
 
                     await dynamo
                     .put({
