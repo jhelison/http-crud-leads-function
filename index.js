@@ -32,11 +32,11 @@ exports.handler = async (event, context) => {
                 await dynamo
                     .put({
                         TableName: "http-crud-leads-items",
-                        Item,
+                        item,
                     })
                     .promise()
                 statusCode = 201
-                body = Item
+                body = item
                 break
 
             case "GET /item/{email}":
