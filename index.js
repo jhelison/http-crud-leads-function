@@ -22,21 +22,39 @@ exports.handler = async (event, context) => {
             case "PUT /items":
                 let requestJSON = JSON.parse(event.body)
 
-                Item = {
-                    id: requestJSON.id,
-                    name: requestJSON.name,
-                    email: requestJSON.email,
-                    fone: requestJSON.fone,
-                }
-
-                await dynamo
-                    .put({
+                if(requestJSON.email){
+                    Item = await dynamo
+                    .get({
                         TableName: "http-crud-leads-items",
-                        Item,
+                        Key: {
+                            email: requestJSON.email,
+                        },
                     })
                     .promise()
-                statusCode = 201
-                body = Item
+
+                    if(Object.keys(Item).length){
+                        statusCode = 409
+                        break
+                    }
+
+                    Item = {
+                        name: requestJSON.name,
+                        email: requestJSON.email,
+                        fone: requestJSON.fone,
+                    }
+    
+                    await dynamo
+                        .put({
+                            TableName: "http-crud-leads-items",
+                            Item,
+                        })
+                        .promise()
+
+                    statusCode = 201
+                    body = Item
+                    break
+                }
+                statusCode = 400
                 break
 
             case "GET /item/{email}":
