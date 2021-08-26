@@ -51,7 +51,7 @@ exports.handler = async (event, context) => {
                     })
                     .promise()
 
-                if(item){
+                if(!Object.keys(item).length){
                     body = item
                 }
                 else{
