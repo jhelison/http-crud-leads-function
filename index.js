@@ -57,7 +57,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "DELETE /item/{email}":
-                await dynamo
+                const body = await dynamo
                     .delete({
                         TableName: "http-crud-leads-items",
                         Key: {
