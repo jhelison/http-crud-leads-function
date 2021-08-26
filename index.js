@@ -32,7 +32,7 @@ exports.handler = async (event, context) => {
                 await dynamo
                     .put({
                         TableName: "http-crud-leads-items",
-                        item: Item,
+                        Item,
                     })
                     .promise()
                 statusCode = 201
@@ -40,7 +40,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "GET /item/{email}":
-                Item = await dynamo
+                body = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
                         Key: {
@@ -49,10 +49,7 @@ exports.handler = async (event, context) => {
                     })
                     .promise()
 
-                if(Object.keys(Item).length){
-                    body = Item
-                }
-                else{
+                if(!Object.keys(body).length){
                     statusCode = 404
                 }
                 break
