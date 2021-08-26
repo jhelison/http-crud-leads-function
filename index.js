@@ -72,7 +72,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "PATCH /item/{email}":
-                item = await dynamo
+                const item = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
                         Key: {
@@ -81,24 +81,24 @@ exports.handler = async (event, context) => {
                     })
                     .promise()
 
-                body = {...item.Item, ...JSON.parse(event.body)}
+                if(Object.keys(item).length){
+                    const newItem = {...item.Item, ...JSON.parse(event.body)}
 
-                // if(Object.keys(item).length){
-                //     const newItem = {...item.Item, ...JSON.parse(event.body)}
+                    await dynamo
+                    .put({
+                        TableName: "http-crud-leads-items",
+                        Item: {newItem},
+                    })
+                    .promise()
 
-                //     await dynamo
-                //     .put({
-                //         TableName: "http-crud-leads-items",
-                //         Item: {newItem},
-                //     })
-                //     .promise()
+                    statusCode = 200
+                    body = newItem
+                }
+                else{
+                    statusCode = 404
+                }
 
-                //     statusCode = 200
-                //     body = newItem
-                // }
-                // else{
-                //     statusCode = 404
-                // }
+                break
 
             default:
                 throw new Error(`Unsupported route: "${event.routeKey}"`)
