@@ -152,6 +152,40 @@ exports.handler = async (event, context) => {
 
                 break
 
+            case "POST /item/{email}":
+                Item = await dynamo
+                .get({
+                    TableName: "http-crud-leads-items",
+                    Key: {
+                        email: event.pathParameters.email,
+                    },
+                })
+                .promise()
+
+                if (Object.keys(Item).length) {
+                    Item = {
+                        email: requestJSON.email || event.pathParameters.email,
+                        name: requestJSON.name,
+                        fone: requestJSON.fone,
+                        status: requestJSON.status,
+                        lastUpdatedAt: Date.now(),
+                    }
+
+                    await dynamo
+                        .put({
+                            TableName: "http-crud-leads-items",
+                            Item,
+                        })
+                        .promise()
+
+                    statusCode = 200
+                    body = Item
+                } else {
+                    statusCode = 404
+                }
+
+                break
+
             default:
                 throw new Error(`Unsupported route: "${event.routeKey}"`)
         }
