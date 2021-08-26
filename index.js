@@ -2,6 +2,11 @@ const AWS = require("aws-sdk")
 
 const dynamo = new AWS.DynamoDB.DocumentClient()
 
+function validateEmail(email) {
+    var re = /\S+@\S+\.\S+/
+    return re.test(email)
+}
+
 exports.handler = async (event, context) => {
     let body = null
     let statusCode = 200
@@ -22,17 +27,22 @@ exports.handler = async (event, context) => {
             case "PUT /items":
                 let requestJSON = JSON.parse(event.body)
 
-                if(requestJSON.email){
-                    Item = await dynamo
-                    .get({
-                        TableName: "http-crud-leads-items",
-                        Key: {
-                            email: requestJSON.email,
-                        },
-                    })
-                    .promise()
+                if (requestJSON.email) {
+                    if(!validateEmail(requestJSON.email)){
+                        statusCode = 400
+                        break
+                    }
 
-                    if(Object.keys(Item).length){
+                    Item = await dynamo
+                        .get({
+                            TableName: "http-crud-leads-items",
+                            Key: {
+                                email: requestJSON.email,
+                            },
+                        })
+                        .promise()
+
+                    if (Object.keys(Item).length) {
                         statusCode = 409
                         break
                     }
@@ -43,9 +53,9 @@ exports.handler = async (event, context) => {
                         fone: requestJSON.fone,
                         createdAt: new Date().toJSON(),
                         status: "prospect",
-                        lastUpdatedAt: new Date().toJSON()
+                        lastUpdatedAt: new Date().toJSON(),
                     }
-    
+
                     await dynamo
                         .put({
                             TableName: "http-crud-leads-items",
@@ -70,37 +80,35 @@ exports.handler = async (event, context) => {
                     })
                     .promise()
 
-                if(!Object.keys(body).length){
+                if (!Object.keys(body).length) {
                     statusCode = 404
                 }
                 break
 
             case "DELETE /item/{email}":
                 Item = await dynamo
-                .get({
-                    TableName: "http-crud-leads-items",
-                    Key: {
-                        email: event.pathParameters.email,
-                    },
-                })
-                .promise()
-
-                if(Object.keys(Item).length){
-                    await dynamo
-                    .delete({
+                    .get({
                         TableName: "http-crud-leads-items",
                         Key: {
                             email: event.pathParameters.email,
                         },
                     })
                     .promise()
+
+                if (Object.keys(Item).length) {
+                    await dynamo
+                        .delete({
+                            TableName: "http-crud-leads-items",
+                            Key: {
+                                email: event.pathParameters.email,
+                            },
+                        })
+                        .promise()
                     statusCode = 204
-                }
-                else{
+                } else {
                     statusCode = 404
                 }
 
-                
                 break
 
             case "PATCH /item/{email}":
@@ -113,24 +121,23 @@ exports.handler = async (event, context) => {
                     })
                     .promise()
 
-                if(Object.keys(Item).length){
+                if (Object.keys(Item).length) {
                     const newItem = {
                         ...Item.Item,
                         ...JSON.parse(event.body),
-                        lastUpdatedAt: new Date().toJSON()
+                        lastUpdatedAt: new Date().toJSON(),
                     }
 
                     await dynamo
-                    .put({
-                        TableName: "http-crud-leads-items",
-                        Item: newItem,
-                    })
-                    .promise()
+                        .put({
+                            TableName: "http-crud-leads-items",
+                            Item: newItem,
+                        })
+                        .promise()
 
                     statusCode = 200
                     body = newItem
-                }
-                else{
+                } else {
                     statusCode = 404
                 }
 
