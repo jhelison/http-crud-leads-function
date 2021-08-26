@@ -81,22 +81,24 @@ exports.handler = async (event, context) => {
                     })
                     .promise()
 
-                if(Object.keys(item).length){
-                    const newItem = {...item.Item, ...JSON.parse(event.body)}
+                body = {...item.Item, ...JSON.parse(event.body)}
 
-                    await dynamo
-                    .put({
-                        TableName: "http-crud-leads-items",
-                        Item: {newItem},
-                    })
-                    .promise()
+                // if(Object.keys(item).length){
+                //     const newItem = {...item.Item, ...JSON.parse(event.body)}
 
-                    statusCode = 200
-                    body = newItem
-                }
-                else{
-                    statusCode = 404
-                }
+                //     await dynamo
+                //     .put({
+                //         TableName: "http-crud-leads-items",
+                //         Item: {newItem},
+                //     })
+                //     .promise()
+
+                //     statusCode = 200
+                //     body = newItem
+                // }
+                // else{
+                //     statusCode = 404
+                // }
 
             default:
                 throw new Error(`Unsupported route: "${event.routeKey}"`)
