@@ -57,9 +57,9 @@ exports.handler = async (event, context) => {
                         email: requestJSON.email,
                         name: requestJSON.name,
                         fone: requestJSON.fone,
-                        createdAt: new Date().toJSON(),
+                        createdAt: Date.now(),
                         status: "prospect",
-                        lastUpdatedAt: new Date().toJSON(),
+                        lastUpdatedAt: Date.now(),
                     }
 
                     await dynamo
@@ -134,7 +134,7 @@ exports.handler = async (event, context) => {
                     const newItem = {
                         ...Item.Item,
                         ...JSON.parse(event.body),
-                        lastUpdatedAt: new Date().toJSON(),
+                        lastUpdatedAt: Date.now(),
                     }
 
                     await dynamo
