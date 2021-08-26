@@ -6,14 +6,23 @@ The repository serves to manage the files that are deployed on **AWS lambda** us
 ## Table of contents
 
 - [AWS Lambda/Gateway Auto Deploy Repository](#aws-lambda-gateway-auto-deploy-repository)
+  * [Table of contents](#table-of-contents)
   * [How it works.](#how-it-works)
     + [How the AWS server works.](#how-the-aws-server-works)
     + [How does Github actions work.](#how-does-github-actions-work)
   * [Acess to the server](#acess-to-the-server)
-    + [GET on all the items](#get-on-all-the-items)
-    + [GET on specific item](#get-on-specific-item)
-    + [Delete item](#delete-item)
-    + [New item](#new-item)
+    + [GET /items - All items](#get--items---all-items)
+      - [Status codes](#status-codes)
+    + [PUT /items - New item](#put--items---new-item)
+      - [Status codes](#status-codes-1)
+    + [GET /items/{email} - Specific item](#get--items--email----specific-item)
+      - [Status codes](#status-codes-2)
+    + [DELETE /items/{email} - Delete item](#delete--items--email----delete-item)
+      - [Status codes](#status-codes-3)
+    + [PATCH /item/{email} - Update on specific columns](#patch--item--email----update-on-specific-columns)
+      - [Status codes](#status-codes-4)
+    + [POST /item/{email} - Replace the item with email](#post--item--email----replace-the-item-with-email)
+      - [Status codes](#status-codes-5)
   * [Todo](#todo)
   * [Changelog](#changelog)
  
@@ -36,101 +45,187 @@ The github action uploads the `index.js` file into **AWS Lambda** using the foll
  
 ## Acess to the server
 Inside our API Gateway, we have the link https://g0deojz10k.execute-api.us-east-2.amazonaws.com, were we make the request to our routes.
+
+On the DynamoDB we are going to use the following columns structure:
+
+- email: This is our primary key, when the put method is called it passes trought a basic validation.
+- name: The name of the user.
+- fone: It have to be numeric.
+- createdAt: When the rows was created, is automatically generated, in Epoch with ms.
+- status: Have to be "prospect" or "client". It is set do default "prospoct".
+- lastUpdatedAt: When the rows was last updated, is automatically generated, in Epoch with ms.
  
 Our api have the following routes:
  
-### GET on all the items
+### GET /items - All items
  
 ```http
   GET /items
 ```
 Returns the items list with the following structure:
 ```json
-  {
+{
   "Items": [
     {
-      "id": ...,
-      "email": ...,
-      "name": ...,
-      "fone": ...
-    },
-    {
-      "id": ...,
+      "status": ...,
+      "createdAt": ...,
+      "lastUpdatedAt": ...,
       "email": ...,
       "name": ...,
       "fone": ...
     }
   ],
-  "Count": 2,
-  "ScannedCount": 2
+  "Count": 1,
+  "ScannedCount": 1
+}
+```
+
+#### Status codes
+[200](https://httpstatuses.com/200)
+
+### PUT /items - New item
+ 
+```http
+  PUT /items
+```
+ 
+The item must be send with the following structure:
+ 
+```json
+{
+  "email": ...,
+  "name": ...,
+  "fone": ...,
+  "status": ... (optional)
 }
 ```
  
-### GET on specific item
+Remembering that as dynamo uses key pair.
+Returns:
+
+```json
+{
+  "email": ...,
+  "name": ...,
+  "fone": ...,
+  "createdAt": ...,
+  "status": ...,
+  "lastUpdatedAt": ...
+}
+```
+
+#### Status codes
+- [201](https://httpstatuses.com/201).
+- [409](https://httpstatuses.com/409), when the email is alread on DynamoDB.
+
+### GET /items/{email} - Specific item
  
 ```http
-  GET /items/{id}
+  GET /items/{email}
 ```
-Where id is the id of the item without the brackets.
+Where email is the email of the item without the brackets.
 Returns the item in Dynamo with the following structure:
 ```json
 {
   "Item": {
-    "id": ...,
+    "status": ...,
+    "createdAt": ...,
+    "lastUpdatedAt": ...,
     "email": ...,
     "name": ...,
     "fone": ...
   }
 }
 ```
- 
-If the item is not found, it returns:
-```json
-{}
-```
+#### Status codes
+- [200](https://httpstatuses.com/200).
+- [404](https://httpstatuses.com/404).
 
-### Delete item
+
+### DELETE /items/{email} - Delete item
 
 ```http
-  DELETE /items/{id}
+  DELETE /items/{email}
 ```
-Where id is the id of the item without the brackets.
-Returns:
-`Deleted item {id}`
- 
-### New item
- 
+Where email is the email of the item without the brackets.
+
+#### Status codes
+- [204](https://httpstatuses.com/204).
+- [404](https://httpstatuses.com/404).
+
+### PATCH /item/{email} - Update on specific columns
+
 ```http
-  PUT /items
+  PATCH /item/{email}
 ```
- 
-The item must be send with the following structure with `Content-Type: application/json`:
- 
+On the Json body, columns can be send to update the item. It keeps all the other columns as it is on DynamoDB.
+
+Example:
 ```json
 {
-  "id": ...,
-  "name": ...,
+	"name": "much name! such easy! wow!"
+}
+```
+
+It returns the full item:
+```json
+{
+  "status": ...,
+  "createdAt": ...,
+  "lastUpdatedAt": ...,
   "email": ...,
+  "name": ...,
   "fone": ...
 }
 ```
- 
-Remembering that as dynamo uses key pair, if the id has already been registered, the item with the id will be updated.
-Returns:
-`Put item {id}`
- 
+
+#### Status codes
+- [200](https://httpstatuses.com/200).
+- [404](https://httpstatuses.com/404).
+
+### POST /item/{email} - Replace the item with email
+```http
+  POST /item/{email}
+```
+
+The post method replaces the full item with was passed to the Json body.
+
+Example:
+```json
+{
+{
+	"name": "much name! such easy! wow!"
+}
+}
+```
+:bangbang: It will leave all the other no programaticle columns empty.
+
+Return the updated item:
+```json
+{
+  "name": ...,
+}
+```
+#### Status codes
+- [200](https://httpstatuses.com/200).
+- [404](https://httpstatuses.com/404).
+
 ## Todo
  
-- [ ]  Put the email as id.
-- [ ]  Validate email.
-- [ ]  Create the created at column.
-- [ ]  Create the last update at column.
-- [ ]  Create status column.
-- [ ]  Create an http patch method.
-- [ ]  Add correct http status to each method.
+- [x]  Put the email as id.
+- [x]  Validate email.
+- [x]  Create the created at column.
+- [x]  Create the last update at column.
+- [x]  Create status column.
+- [x]  Create an http patch method.
+- [x]  Add correct http status to each method.
 - [ ]  Create Search Methods Using Parameters.
 
 ## Changelog
+### 1.1.0 26/08/2021
+- Email now is the primary key
+- The methods now have their http status
+- Added new columns
 ### 1.0.1 25/08/2021
 - Changed the language of the project.
 ### 1.0.0 24/08/2021
