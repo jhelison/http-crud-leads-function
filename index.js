@@ -12,7 +12,7 @@ exports.handler = async (event, context) => {
     
     try {
         switch (event.routeKey) {
-            case "DELETE /items/{email}":
+            case "DELETE /item/{email}":
                 await dynamo
                     .delete({
                         TableName: "http-crud-leads-items",
@@ -25,7 +25,7 @@ exports.handler = async (event, context) => {
                 body = null
                 break
                 
-            case "GET /items/{email}":
+            case "GET /item/{email}":
                 body = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
