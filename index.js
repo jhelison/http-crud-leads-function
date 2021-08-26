@@ -51,7 +51,7 @@ exports.handler = async (event, context) => {
                     })
                     .promise()
 
-                if(!Object.keys(item).length){
+                if(Object.keys(item).length){
                     body = item
                 }
                 else{
@@ -81,7 +81,7 @@ exports.handler = async (event, context) => {
                     })
                     .promise()
 
-                if(item){
+                if(Object.keys(item).length){
                     const newItem = {...item.Item, ...JSON.parse(event.body)}
 
                     await dynamo
