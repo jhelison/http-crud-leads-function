@@ -39,7 +39,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "GET /item/{email}":
-                item = await dynamo
+                const item = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
                         Key: {
@@ -57,7 +57,17 @@ exports.handler = async (event, context) => {
                 break
 
             case "DELETE /item/{email}":
-                const body = await dynamo
+                const item = await dynamo
+                .get({
+                    TableName: "http-crud-leads-items",
+                    Key: {
+                        email: event.pathParameters.email,
+                    },
+                })
+                .promise()
+
+                if(Object.keys(item).length){
+                    await dynamo
                     .delete({
                         TableName: "http-crud-leads-items",
                         Key: {
@@ -65,7 +75,13 @@ exports.handler = async (event, context) => {
                         },
                     })
                     .promise()
-                statusCode = 204
+                    statusCode = 204
+                }
+                else{
+                    statusCode = 404
+                }
+
+                
                 break
 
             case "PATCH /item/{email}":
