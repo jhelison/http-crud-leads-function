@@ -3,39 +3,15 @@ const AWS = require("aws-sdk")
 const dynamo = new AWS.DynamoDB.DocumentClient()
 
 exports.handler = async (event, context) => {
-    let body
+    let body = null
     let statusCode = 200
     const headers = {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
     }
-    
+
     try {
         switch (event.routeKey) {
-            case "DELETE /item/{email}":
-                await dynamo
-                    .delete({
-                        TableName: "http-crud-leads-items",
-                        Key: {
-                            email: event.pathParameters.email,
-                        },
-                    })
-                    .promise()
-                statusCode = 204
-                body = null
-                break
-                
-            case "GET /item/{email}":
-                body = await dynamo
-                    .get({
-                        TableName: "http-crud-leads-items",
-                        Key: {
-                            email: event.pathParameters.email,
-                        },
-                    })
-                    .promise()
-                break
-
             case "GET /items":
                 console.log(event.routeKey)
                 console.log(event.body)
@@ -64,6 +40,64 @@ exports.handler = async (event, context) => {
                 statusCode = 201
                 body = Item
                 break
+
+            case "GET /item/{email}":
+                item = await dynamo
+                    .get({
+                        TableName: "http-crud-leads-items",
+                        Key: {
+                            email: event.pathParameters.email,
+                        },
+                    })
+                    .promise()
+
+                if(item){
+                    body = item
+                }
+                else{
+                    statusCode = 404
+                }
+                break
+
+            case "DELETE /item/{email}":
+                await dynamo
+                    .delete({
+                        TableName: "http-crud-leads-items",
+                        Key: {
+                            email: event.pathParameters.email,
+                        },
+                    })
+                    .promise()
+                statusCode = 204
+                break
+
+            case "PATCH /item/{email}":
+                item = await dynamo
+                    .get({
+                        TableName: "http-crud-leads-items",
+                        Key: {
+                            email: event.pathParameters.email,
+                        },
+                    })
+                    .promise()
+
+                if(item){
+                    const newItem = {...item.Item, ...JSON.parse(event.body)}
+
+                    await dynamo
+                    .put({
+                        TableName: "http-crud-leads-items",
+                        Item: {newItem},
+                    })
+                    .promise()
+
+                    statusCode = 200
+                    body = newItem
+                }
+                else{
+                    statusCode = 404
+                }
+
             default:
                 throw new Error(`Unsupported route: "${event.routeKey}"`)
         }
