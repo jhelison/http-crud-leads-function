@@ -87,7 +87,7 @@ exports.handler = async (event, context) => {
                     await dynamo
                     .put({
                         TableName: "http-crud-leads-items",
-                        Item: {newItem},
+                        Item: newItem,
                     })
                     .promise()
 
