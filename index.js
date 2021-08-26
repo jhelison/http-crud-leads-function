@@ -37,6 +37,9 @@ exports.handler = async (event, context) => {
                 break
 
             case "GET /items":
+                console.log(event.routeKey)
+                console.log(event.body)
+                console.log(event.queryStringParameters)
                 body = await dynamo
                     .scan({ TableName: "http-crud-leads-items" })
                     .promise()
