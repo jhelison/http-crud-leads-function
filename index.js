@@ -5,6 +5,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient()
 exports.handler = async (event, context) => {
     let body = null
     let statusCode = 200
+    let item
     const headers = {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
@@ -21,7 +22,7 @@ exports.handler = async (event, context) => {
             case "PUT /items":
                 let requestJSON = JSON.parse(event.body)
 
-                const Item = {
+                item = {
                     id: requestJSON.id,
                     name: requestJSON.name,
                     email: requestJSON.email,
@@ -39,7 +40,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "GET /item/{email}":
-                const item = await dynamo
+                item = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
                         Key: {
@@ -57,7 +58,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "DELETE /item/{email}":
-                const item = await dynamo
+                item = await dynamo
                 .get({
                     TableName: "http-crud-leads-items",
                     Key: {
@@ -85,7 +86,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "PATCH /item/{email}":
-                const item = await dynamo
+                item = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
                         Key: {
