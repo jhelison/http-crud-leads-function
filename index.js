@@ -29,6 +29,9 @@ exports.handler = async (event, context) => {
 
                 if (requestJSON.email) {
                     if(!validateEmail(requestJSON.email)){
+                        body = {
+                            error: "the email need to be correctly formated"
+                        }
                         statusCode = 400
                         break
                     }
@@ -43,6 +46,9 @@ exports.handler = async (event, context) => {
                         .promise()
 
                     if (Object.keys(Item).length) {
+                        body = {
+                            error: "the email is already registered"
+                        }
                         statusCode = 409
                         break
                     }
@@ -66,6 +72,9 @@ exports.handler = async (event, context) => {
                     statusCode = 201
                     body = Item
                     break
+                }
+                body = {
+                    error: "missing the primary key email"
                 }
                 statusCode = 400
                 break
