@@ -31,26 +31,30 @@ const putDynamoItem = async (Item) => {
 
 const deleteDynamoItem = async (email) => {
     await dynamo
-    .delete({
-        TableName: TABLENAME,
-        Key: {
-            email,
-        },
-    })
-    .promise()
+        .delete({
+            TableName: TABLENAME,
+            Key: {
+                email,
+            },
+        })
+        .promise()
+}
+
+const checkStatusChange = (Item, requestJSON) => {
+    return requestJSON.status === "customer" && Item.status === "prospect"
 }
 
 const getAllDynamoItems = async () => {
-    return await dynamo
-    .scan({ TableName: TABLENAME })
-    .promise()
+    return await dynamo.scan({ TableName: TABLENAME }).promise()
 }
 
 exports.handler = async (event, context) => {
     let body = null
     let statusCode = 200
+
     let Item
     let requestJSON
+
     const headers = {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
@@ -90,6 +94,7 @@ exports.handler = async (event, context) => {
                         createdAt: Date.now(),
                         status: "prospect",
                         lastUpdatedAt: Date.now(),
+                        customerAt: null,
                     }
 
                     await putDynamoItem(Item)
@@ -131,8 +136,11 @@ exports.handler = async (event, context) => {
                 if (Object.keys(Item).length) {
                     const newItem = {
                         ...Item.Item,
-                        ...JSON.parse(event.body),
                         lastUpdatedAt: Date.now(),
+                        customerAt: checkStatusChange(Item, requestJSON)
+                            ? Date.now()
+                            : null,
+                        ...JSON.parse(event.body)
                     }
 
                     await putDynamoItem(newItem)
@@ -157,6 +165,9 @@ exports.handler = async (event, context) => {
                         status: requestJSON.status,
                         lastUpdatedAt: Date.now(),
                         createdAt: requestJSON.createdAt || Item.Item.createdAt,
+                        customerAt: checkStatusChange(Item, requestJSON)
+                        ? Date.now()
+                        : null
                     }
 
                     await putDynamoItem(Item)

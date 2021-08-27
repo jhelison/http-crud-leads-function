@@ -54,6 +54,7 @@ On the DynamoDB we are going to use the following columns structure:
 - createdAt: When the rows was created, is automatically generated, in Epoch with ms.
 - status: Have to be "prospect" or "client". It is set do default "prospoct".
 - lastUpdatedAt: When the rows was last updated, is automatically generated, in Epoch with ms.
+- customerAt: When the status "propspect" was changed to "customer", in Epoch with ms.
  
 Our api have the following routes:
  
@@ -225,6 +226,7 @@ Return the updated item:
 ### 1.2.0 27/08/2021
 - Changed routes from item/items to lead/leads
 - Added functions to handle Dynamo
+- Added the customerAt column
 ### 1.1.0 26/08/2021
 - Email now is the primary key
 - The methods now have their http status
