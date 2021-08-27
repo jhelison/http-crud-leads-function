@@ -86,14 +86,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "GET /lead/{email}":
-                body = await dynamo
-                    .get({
-                        TableName: "http-crud-leads-items",
-                        Key: {
-                            email: event.pathParameters.email,
-                        },
-                    })
-                    .promise()
+                body = await getDynamoItem(event.pathParameters.email)
 
                 if (!Object.keys(body).length) {
                     statusCode = 404
@@ -101,14 +94,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "DELETE /lead/{email}":
-                Item = await dynamo
-                    .get({
-                        TableName: "http-crud-leads-items",
-                        Key: {
-                            email: event.pathParameters.email,
-                        },
-                    })
-                    .promise()
+                Item = await getDynamoItem(event.pathParameters.email)
 
                 if (Object.keys(Item).length) {
                     await dynamo
@@ -127,14 +113,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "PATCH /lead/{email}":
-                Item = await dynamo
-                    .get({
-                        TableName: "http-crud-leads-items",
-                        Key: {
-                            email: event.pathParameters.email,
-                        },
-                    })
-                    .promise()
+                Item = await getDynamoItem(event.pathParameters.email)
 
                 if (Object.keys(Item).length) {
                     const newItem = {
@@ -159,15 +138,10 @@ exports.handler = async (event, context) => {
                 break
 
             case "POST /lead/{email}":
-                Item = await dynamo
-                .get({
-                    TableName: "http-crud-leads-items",
-                    Key: {
-                        email: event.pathParameters.email,
-                    },
-                })
-                .promise()
+                Item = await getDynamoItem(event.pathParameters.email)
+
                 requestJSON = JSON.parse(event.body)
+                
                 .get({
                     TableName: "http-crud-leads-items",
                     Key: {

@@ -224,6 +224,7 @@ Return the updated item:
 ## Changelog
 ### 1.2.0 27/08/2021
 - Changed routes from item/items to lead/leads
+- Added functions to handle Dynamo
 ### 1.1.0 26/08/2021
 - Email now is the primary key
 - The methods now have their http status
