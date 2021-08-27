@@ -45,7 +45,7 @@ const getAllDynamoItems = async () => {
 }
 
 const checkStatusChange = (Item, requestJSON) => {
-    return requestJSON.status === "customer" && Item.Item.status === "prospect"
+    return requestJSON.status === "customer" && Item.Item.status !== "customer"
 }
 
 exports.handler = async (event, context) => {
