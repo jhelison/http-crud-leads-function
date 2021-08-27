@@ -18,13 +18,13 @@ exports.handler = async (event, context) => {
 
     try {
         switch (event.routeKey) {
-            case "GET /items":
+            case "GET /leads":
                 body = await dynamo
                     .scan({ TableName: "http-crud-leads-items" })
                     .promise()
                 break
 
-            case "PUT /items":
+            case "PUT /leads":
                 let requestJSON = JSON.parse(event.body)
 
                 if (requestJSON.email) {
@@ -79,7 +79,7 @@ exports.handler = async (event, context) => {
                 statusCode = 400
                 break
 
-            case "GET /item/{email}":
+            case "GET /lead/{email}":
                 body = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
@@ -94,7 +94,7 @@ exports.handler = async (event, context) => {
                 }
                 break
 
-            case "DELETE /item/{email}":
+            case "DELETE /lead/{email}":
                 Item = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
@@ -120,7 +120,7 @@ exports.handler = async (event, context) => {
 
                 break
 
-            case "PATCH /item/{email}":
+            case "PATCH /lead/{email}":
                 Item = await dynamo
                     .get({
                         TableName: "http-crud-leads-items",
@@ -152,7 +152,7 @@ exports.handler = async (event, context) => {
 
                 break
 
-            case "POST /item/{email}":
+            case "POST /lead/{email}":
                 Item = await dynamo
                 .get({
                     TableName: "http-crud-leads-items",

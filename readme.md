@@ -222,6 +222,8 @@ Return the updated item:
 - [ ]  Create Search Methods Using Parameters.
 
 ## Changelog
+### 1.2.0 27/08/2021
+- Changed routes from item/items to lead/leads
 ### 1.1.0 26/08/2021
 - Email now is the primary key
 - The methods now have their http status
