@@ -156,6 +156,7 @@ exports.handler = async (event, context) => {
                         fone: requestJSON.fone,
                         status: requestJSON.status,
                         lastUpdatedAt: Date.now(),
+                        createdAt: requestJSON.createdAt || Item.Item.createdAt,
                     }
 
                     await putDynamoItem(Item)
