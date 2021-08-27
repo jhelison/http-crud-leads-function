@@ -59,7 +59,7 @@ exports.handler = async (event, context) => {
     try {
         switch (event.routeKey) {
             case "GET /leads":
-                body = getAllDynamoItems()
+                body = await getAllDynamoItems()
                 break
 
             case "PUT /leads":
