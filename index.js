@@ -2,6 +2,7 @@ const AWS = require("aws-sdk")
 
 const dynamo = new AWS.DynamoDB.DocumentClient()
 
+const TABLENAME = "http-crud-leads-items"
 
 const validateEmail = (email) => {
     var re = /\S+@\S+\.\S+/
@@ -10,10 +11,30 @@ const validateEmail = (email) => {
 
 const getDynamoItem = async (email) => {
     return await dynamo
-    .get({
-        TableName: "http-crud-leads-items",
+        .get({
+            TableName: TABLENAME,
+            Key: {
+                email,
+            },
+        })
+        .promise()
+}
+
+const putDynamoItem = async (Item) => {
+    await dynamo
+        .put({
+            TableName: TABLENAME,
+            Item,
+        })
+        .promise()
+}
+
+const deleteDynamoItem = async (email) => {
+    await dynamo
+    .delete({
+        TableName: TABLENAME,
         Key: {
-            email: email,
+            email,
         },
     })
     .promise()
@@ -41,9 +62,9 @@ exports.handler = async (event, context) => {
                 requestJSON = JSON.parse(event.body)
 
                 if (requestJSON.email) {
-                    if(!validateEmail(requestJSON.email)){
+                    if (!validateEmail(requestJSON.email)) {
                         body = {
-                            error: "the email need to be correctly formated"
+                            error: "the email need to be correctly formated",
                         }
                         statusCode = 400
                         break
@@ -53,7 +74,7 @@ exports.handler = async (event, context) => {
 
                     if (Object.keys(Item).length) {
                         body = {
-                            error: "the email is already registered"
+                            error: "the email is already registered",
                         }
                         statusCode = 409
                         break
@@ -68,19 +89,14 @@ exports.handler = async (event, context) => {
                         lastUpdatedAt: Date.now(),
                     }
 
-                    await dynamo
-                        .put({
-                            TableName: "http-crud-leads-items",
-                            Item,
-                        })
-                        .promise()
+                    await putDynamoItem(Item)
 
                     statusCode = 201
                     body = Item
                     break
                 }
                 body = {
-                    error: "missing the primary key email"
+                    error: "missing the primary key email",
                 }
                 statusCode = 400
                 break
@@ -97,14 +113,7 @@ exports.handler = async (event, context) => {
                 Item = await getDynamoItem(event.pathParameters.email)
 
                 if (Object.keys(Item).length) {
-                    await dynamo
-                        .delete({
-                            TableName: "http-crud-leads-items",
-                            Key: {
-                                email: event.pathParameters.email,
-                            },
-                        })
-                        .promise()
+                    await deleteDynamoItem(event.pathParameters.email)
                     statusCode = 204
                 } else {
                     statusCode = 404
@@ -122,12 +131,7 @@ exports.handler = async (event, context) => {
                         lastUpdatedAt: Date.now(),
                     }
 
-                    await dynamo
-                        .put({
-                            TableName: "http-crud-leads-items",
-                            Item: newItem,
-                        })
-                        .promise()
+                    await putDynamoItem(newItem)
 
                     statusCode = 200
                     body = newItem
@@ -141,14 +145,14 @@ exports.handler = async (event, context) => {
                 Item = await getDynamoItem(event.pathParameters.email)
 
                 requestJSON = JSON.parse(event.body)
-                
-                .get({
-                    TableName: "http-crud-leads-items",
-                    Key: {
-                        email: event.pathParameters.email,
-                    },
-                })
-                .promise()
+
+                    .get({
+                        TableName: "http-crud-leads-items",
+                        Key: {
+                            email: event.pathParameters.email,
+                        },
+                    })
+                    .promise()
 
                 if (Object.keys(Item).length) {
                     Item = {
@@ -159,17 +163,11 @@ exports.handler = async (event, context) => {
                         lastUpdatedAt: Date.now(),
                     }
 
-                    await dynamo
-                        .put({
-                            TableName: "http-crud-leads-items",
-                            Item,
-                        })
-                        .promise()
+                    await putDynamoItem(Item)
 
                     statusCode = 200
                     body = Item
-                }
-                else {
+                } else {
                     statusCode = 404
                 }
 
