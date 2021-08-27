@@ -165,9 +165,10 @@ exports.handler = async (event, context) => {
                         status: requestJSON.status,
                         lastUpdatedAt: Date.now(),
                         createdAt: requestJSON.createdAt || Item.Item.createdAt,
-                        customerAt: checkStatusChange(Item, requestJSON)
-                        ? Date.now()
-                        : null
+                        customerAt: requestJSON.customerAt ? requestJSON.customerAt : 
+                        checkStatusChange(Item, requestJSON)
+                            ? Date.now()
+                            : null
                     }
 
                     await putDynamoItem(Item)
