@@ -2,9 +2,21 @@ const AWS = require("aws-sdk")
 
 const dynamo = new AWS.DynamoDB.DocumentClient()
 
-function validateEmail(email) {
+
+const validateEmail = (email) => {
     var re = /\S+@\S+\.\S+/
     return re.test(email)
+}
+
+const getDynamoItem = async (email) => {
+    return await dynamo
+    .get({
+        TableName: "http-crud-leads-items",
+        Key: {
+            email: email,
+        },
+    })
+    .promise()
 }
 
 exports.handler = async (event, context) => {
@@ -37,14 +49,7 @@ exports.handler = async (event, context) => {
                         break
                     }
 
-                    Item = await dynamo
-                        .get({
-                            TableName: "http-crud-leads-items",
-                            Key: {
-                                email: requestJSON.email,
-                            },
-                        })
-                        .promise()
+                    Item = await getDynamoItem(requestJSON.email)
 
                     if (Object.keys(Item).length) {
                         body = {
@@ -155,6 +160,13 @@ exports.handler = async (event, context) => {
 
             case "POST /lead/{email}":
                 Item = await dynamo
+                .get({
+                    TableName: "http-crud-leads-items",
+                    Key: {
+                        email: event.pathParameters.email,
+                    },
+                })
+                .promise()
                 requestJSON = JSON.parse(event.body)
                 .get({
                     TableName: "http-crud-leads-items",
