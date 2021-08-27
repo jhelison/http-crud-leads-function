@@ -40,12 +40,12 @@ const deleteDynamoItem = async (email) => {
         .promise()
 }
 
-const checkStatusChange = (Item, requestJSON) => {
-    return requestJSON.status === "customer" && Item.status === "prospect"
-}
-
 const getAllDynamoItems = async () => {
     return await dynamo.scan({ TableName: TABLENAME }).promise()
+}
+
+const checkStatusChange = (Item, requestJSON) => {
+    return requestJSON.status === "customer" && Item.Item.status === "prospect"
 }
 
 exports.handler = async (event, context) => {
