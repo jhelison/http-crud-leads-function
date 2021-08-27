@@ -55,6 +55,8 @@ On the DynamoDB we are going to use the following columns structure:
 - status: Have to be "prospect" or "client". It is set do default "prospoct".
 - lastUpdatedAt: When the rows was last updated, is automatically generated, in Epoch with ms.
 - customerAt: When the status "propspect" was changed to "customer", in Epoch with ms.
+
+:bangbang: Everytime the status is changed from "prospect" to "customer" the customerAt is updated
  
 Our api have the following routes:
  

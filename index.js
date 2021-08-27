@@ -162,7 +162,7 @@ exports.handler = async (event, context) => {
                         email: requestJSON.email || event.pathParameters.email,
                         name: requestJSON.name,
                         fone: requestJSON.fone,
-                        status: requestJSON.status,
+                        status: requestJSON.status ? requestJSON.status : Item.Item.status,
                         lastUpdatedAt: Date.now(),
                         createdAt: requestJSON.createdAt || Item.Item.createdAt,
                         customerAt: requestJSON.customerAt ? requestJSON.customerAt : 
