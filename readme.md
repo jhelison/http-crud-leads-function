@@ -73,6 +73,7 @@ Returns the items list with the following structure:
       "status": ...,
       "createdAt": ...,
       "lastUpdatedAt": ...,
+      "customerAt": ...,
       "email": ...,
       "name": ...,
       "fone": ...
@@ -113,7 +114,8 @@ Returns:
   "fone": ...,
   "createdAt": ...,
   "status": ...,
-  "lastUpdatedAt": ...
+  "lastUpdatedAt": ...,
+  "customerAt": ...
 }
 ```
 
@@ -134,6 +136,7 @@ Returns the item in Dynamo with the following structure:
     "status": ...,
     "createdAt": ...,
     "lastUpdatedAt": ...,
+    "customerAt": ...,
     "email": ...,
     "name": ...,
     "fone": ...
@@ -176,6 +179,7 @@ It returns the full item:
   "status": ...,
   "createdAt": ...,
   "lastUpdatedAt": ...,
+  "customerAt": ...,
   "email": ...,
   "name": ...,
   "fone": ...
@@ -185,34 +189,6 @@ It returns the full item:
 #### Status codes
 - [200](https://httpstatuses.com/200).
 - [404](https://httpstatuses.com/404).
-
-### POST /item/{email} - Replace the item with email
-```http
-  POST /item/{email}
-```
-
-The post method replaces the full item with was passed to the Json body.
-
-Example:
-```json
-{
-{
-	"name": "much name! such easy! wow!"
-}
-}
-```
-:bangbang: It will leave all the other no programaticle columns empty.
-
-Return the updated item:
-```json
-{
-  "name": ...,
-}
-```
-#### Status codes
-- [200](https://httpstatuses.com/200).
-- [404](https://httpstatuses.com/404).
-
 ## Todo
  
 - [x]  Put the email as id.
