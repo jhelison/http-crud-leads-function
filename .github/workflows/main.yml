@@ -26,8 +26,8 @@ jobs:
             npm ci
         - name: deploy
           run: |
-            npx ncc build index.js
-            zip -j deploy.zip ./dist/*
-            aws lambda update-function-code --function-name=http-crud-leads-function --zip-file=fileb://deploy.zip
+            npx ncc build ./src/index.js
+            zip -j index.zip ./dist/index.js
+            aws lambda update-function-code --function-name=http-crud-leads-function --zip-file=fileb://index.zip
 
 
