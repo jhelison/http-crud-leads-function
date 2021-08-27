@@ -229,6 +229,7 @@ Return the updated item:
 - Changed routes from item/items to lead/leads
 - Added functions to handle Dynamo
 - Added the customerAt column
+- Removed the Post method
 ### 1.1.0 26/08/2021
 - Email now is the primary key
 - The methods now have their http status

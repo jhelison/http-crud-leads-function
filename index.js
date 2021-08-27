@@ -153,34 +153,6 @@ exports.handler = async (event, context) => {
 
                 break
 
-            case "POST /lead/{email}":
-                requestJSON = JSON.parse(event.body)
-                Item = await getDynamoItem(event.pathParameters.email)
-
-                if (Object.keys(Item).length) {
-                    Item = {
-                        email: requestJSON.email || event.pathParameters.email,
-                        name: requestJSON.name,
-                        fone: requestJSON.fone,
-                        status: requestJSON.status ? requestJSON.status : Item.Item.status,
-                        lastUpdatedAt: Date.now(),
-                        createdAt: requestJSON.createdAt || Item.Item.createdAt,
-                        customerAt: requestJSON.customerAt ? requestJSON.customerAt : 
-                        checkStatusChange(Item, requestJSON)
-                            ? Date.now()
-                            : null
-                    }
-
-                    await putDynamoItem(Item)
-
-                    statusCode = 200
-                    body = Item
-                } else {
-                    statusCode = 404
-                }
-
-                break
-
             default:
                 throw new Error(`Unsupported route: "${event.routeKey}"`)
         }
