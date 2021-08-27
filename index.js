@@ -40,12 +40,17 @@ const deleteDynamoItem = async (email) => {
     .promise()
 }
 
+const getAllDynamoItems = async () => {
+    return await dynamo
+    .scan({ TableName: TABLENAME })
+    .promise()
+}
+
 exports.handler = async (event, context) => {
     let body = null
     let statusCode = 200
     let Item
-
-    const requestJSON = JSON.parse(event.body)
+    let requestJSON
     const headers = {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
@@ -54,12 +59,11 @@ exports.handler = async (event, context) => {
     try {
         switch (event.routeKey) {
             case "GET /leads":
-                body = await dynamo
-                    .scan({ TableName: "http-crud-leads-items" })
-                    .promise()
+                body = getAllDynamoItems()
                 break
 
             case "PUT /leads":
+                requestJSON = JSON.parse(event.body)
                 if (requestJSON.email) {
                     if (!validateEmail(requestJSON.email)) {
                         body = {
@@ -121,6 +125,7 @@ exports.handler = async (event, context) => {
                 break
 
             case "PATCH /lead/{email}":
+                requestJSON = JSON.parse(event.body)
                 Item = await getDynamoItem(event.pathParameters.email)
 
                 if (Object.keys(Item).length) {
@@ -141,14 +146,8 @@ exports.handler = async (event, context) => {
                 break
 
             case "POST /lead/{email}":
+                requestJSON = JSON.parse(event.body)
                 Item = await getDynamoItem(event.pathParameters.email)
-                    .get({
-                        TableName: "http-crud-leads-items",
-                        Key: {
-                            email: event.pathParameters.email,
-                        },
-                    })
-                    .promise()
 
                 if (Object.keys(Item).length) {
                     Item = {
