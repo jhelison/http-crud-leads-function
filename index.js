@@ -44,7 +44,8 @@ exports.handler = async (event, context) => {
     let body = null
     let statusCode = 200
     let Item
-    let requestJSON
+
+    const requestJSON = JSON.parse(event.body)
     const headers = {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
@@ -59,8 +60,6 @@ exports.handler = async (event, context) => {
                 break
 
             case "PUT /leads":
-                requestJSON = JSON.parse(event.body)
-
                 if (requestJSON.email) {
                     if (!validateEmail(requestJSON.email)) {
                         body = {
@@ -143,9 +142,6 @@ exports.handler = async (event, context) => {
 
             case "POST /lead/{email}":
                 Item = await getDynamoItem(event.pathParameters.email)
-
-                requestJSON = JSON.parse(event.body)
-
                     .get({
                         TableName: "http-crud-leads-items",
                         Key: {
