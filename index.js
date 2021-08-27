@@ -154,6 +154,7 @@ exports.handler = async (event, context) => {
 
             case "POST /lead/{email}":
                 Item = await dynamo
+                let requestJSON = JSON.parse(event.body)
                 .get({
                     TableName: "http-crud-leads-items",
                     Key: {
@@ -180,7 +181,8 @@ exports.handler = async (event, context) => {
 
                     statusCode = 200
                     body = Item
-                } else {
+                }
+                else {
                     statusCode = 404
                 }
 
