@@ -11,18 +11,16 @@ The repository serves to manage the files that are deployed on **AWS lambda** us
     + [How the AWS server works.](#how-the-aws-server-works)
     + [How does Github actions work.](#how-does-github-actions-work)
   * [Acess to the server](#acess-to-the-server)
-    + [GET /items - All items](#get--items---all-items)
+    + [GET /leads - All items](#get--leads---all-items)
       - [Status codes](#status-codes)
-    + [PUT /items - New item](#put--items---new-item)
+    + [PUT /leads - New item](#put--leads---new-item)
       - [Status codes](#status-codes-1)
-    + [GET /items/{email} - Specific item](#get--items--email----specific-item)
+    + [GET /lead/{email} - Specific item](#get--lead--email----specific-item)
       - [Status codes](#status-codes-2)
-    + [DELETE /items/{email} - Delete item](#delete--items--email----delete-item)
+    + [DELETE /lead/{email} - Delete item](#delete--lead--email----delete-item)
       - [Status codes](#status-codes-3)
-    + [PATCH /item/{email} - Update on specific columns](#patch--item--email----update-on-specific-columns)
+    + [PATCH /lead/{email} - Update on specific columns](#patch--lead--email----update-on-specific-columns)
       - [Status codes](#status-codes-4)
-    + [POST /item/{email} - Replace the item with email](#post--item--email----replace-the-item-with-email)
-      - [Status codes](#status-codes-5)
   * [Todo](#todo)
   * [Changelog](#changelog)
  
@@ -60,10 +58,10 @@ On the DynamoDB we are going to use the following columns structure:
  
 Our api have the following routes:
  
-### GET /items - All items
+### GET /leads - All items
  
 ```http
-  GET /items
+  GET /leads
 ```
 Returns the items list with the following structure:
 ```json
@@ -87,10 +85,10 @@ Returns the items list with the following structure:
 #### Status codes
 [200](https://httpstatuses.com/200)
 
-### PUT /items - New item
+### PUT /leads - New item
  
 ```http
-  PUT /items
+  PUT /leads
 ```
  
 The item must be send with the following structure:
@@ -123,10 +121,10 @@ Returns:
 - [201](https://httpstatuses.com/201).
 - [409](https://httpstatuses.com/409), when the email is alread on DynamoDB.
 
-### GET /items/{email} - Specific item
+### GET /lead/{email} - Specific item
  
 ```http
-  GET /items/{email}
+  GET /lead/{email}
 ```
 Where email is the email of the item without the brackets.
 Returns the item in Dynamo with the following structure:
@@ -148,10 +146,10 @@ Returns the item in Dynamo with the following structure:
 - [404](https://httpstatuses.com/404).
 
 
-### DELETE /items/{email} - Delete item
+### DELETE /lead/{email} - Delete item
 
 ```http
-  DELETE /items/{email}
+  DELETE /lead/{email}
 ```
 Where email is the email of the item without the brackets.
 
@@ -159,10 +157,10 @@ Where email is the email of the item without the brackets.
 - [204](https://httpstatuses.com/204).
 - [404](https://httpstatuses.com/404).
 
-### PATCH /item/{email} - Update on specific columns
+### PATCH /lead/{email} - Update on specific columns
 
 ```http
-  PATCH /item/{email}
+  PATCH /lead/{email}
 ```
 On the Json body, columns can be send to update the item. It keeps all the other columns as it is on DynamoDB.
 
@@ -201,6 +199,8 @@ It returns the full item:
 - [ ]  Create Search Methods Using Parameters.
 
 ## Changelog
+### 1.2.1 28/08/2021
+- Updated readme
 ### 1.2.0 27/08/2021
 - Changed routes from item/items to lead/leads
 - Added functions to handle Dynamo
